@@ -16,7 +16,7 @@ This feature is one of the "j1Tech" developed by jwellone Inc for Unity.
 - Import the package.
 - Ctrl + right click on the Scene View to bring up a pop-up menu.
 
-https://user-images.githubusercontent.com/85072161/173635796-fa3945ac-556c-443c-af3e-ff113d77b936.mp4
+https://user-images.githubusercontent.com/85072161/174149494-e0b75466-228d-4ebc-b60d-aa158c72813e.mp4
 
 
 ## Authors
