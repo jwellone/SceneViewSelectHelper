@@ -75,31 +75,26 @@ namespace jwelloneEditor
 		public static void SetIconEnabled(bool enabled)
 		{
 			var annotations = (Array)miGetAnnotations.Invoke(null, null);
+			var param = new object[] { 0, "", 0 };
 			foreach (var a in annotations)
 			{
-				var parameters = new object[]
-				{
-						(int)fiClassId.GetValue(a),
-						(string)fiScriptClass.GetValue(a),
-						Convert.ToInt32(enabled),
-				};
-				miSetIconEnabled.Invoke(null, parameters);
+				param[0] = (int)fiClassId.GetValue(a);
+				param[1] = (string)fiScriptClass.GetValue(a);
+				param[2] = Convert.ToInt32(enabled);
+				miSetIconEnabled.Invoke(null, param);
 			}
 		}
 
 		public static void SetGizmoEnabled(bool enabled)
 		{
 			var annotations = (Array)miGetAnnotations.Invoke(null, null);
+			var param = new object[] { 0, "", 0, true };
 			foreach (var a in annotations)
 			{
-				var parameters = new object[]
-				{
-						(int)fiClassId.GetValue(a),
-						(string)fiScriptClass.GetValue(a),
-						Convert.ToInt32(enabled),
-						true
-				};
-				miSetGizmoEnabled.Invoke(null, parameters);
+				param[0] = (int)fiClassId.GetValue(a);
+				param[1] = (string)fiScriptClass.GetValue(a);
+				param[2] = Convert.ToInt32(enabled);
+				miSetGizmoEnabled.Invoke(null, param);
 			}
 		}
 
