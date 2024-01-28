@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEditor;
+using System.Collections;
+using System.Linq;
 
 #nullable enable
 
@@ -16,6 +18,15 @@ namespace jwelloneEditor
 		static Type? _tSceneViewPicking;
 		static Type tSceneViewPicking => _tSceneViewPicking ?? (_tSceneViewPicking = Type.GetType("UnityEditor.SceneViewPicking,UnityEditor"));
 
+#if UNITY_2022_2_OR_NEWER
+
+		static Type? _tPickingClass;
+        static Type tPickingClass => _tPickingClass ?? (_tPickingClass = Type.GetType("UnityEditor.PickingObject,UnityEditor"));
+
+        static MethodInfo? _miTryGetGameObjectMethod;
+        static MethodInfo? miTryGetGameObjectMethod => _miTryGetGameObjectMethod??(_miTryGetGameObjectMethod= tPickingClass.GetMethod("TryGetGameObject", BindingFlags.Public | BindingFlags.Instance));
+
+#endif
 		static MethodInfo? _miGetAllOverlapping;
 		static MethodInfo miGetAllOverlapping => _miGetAllOverlapping ?? (_miGetAllOverlapping = tSceneViewPicking.GetMethod("GetAllOverlapping", BIND_FLAGS));
 
@@ -55,12 +66,40 @@ namespace jwelloneEditor
 			}
 
 			var list = new List<GameObject>();
-			foreach (var target in (IEnumerable<GameObject>)miGetAllOverlapping.Invoke(null, new object[] { e.mousePosition }))
+
+#if UNITY_2022_2_OR_NEWER
+			if (SceneViewSelectHelper.tPickingClass != null)
+			{
+				// 调用 miGetAllOverlapping.Invoke 获取结果
+				var result = miGetAllOverlapping.Invoke(null, new object[] { e.mousePosition });
+
+				if (result is IEnumerable enumerableResult)
+				{
+
+					foreach (object obj in enumerableResult)
+					{
+				
+						
+							object[] parameters = new object[] { null };
+							bool success = (bool)miTryGetGameObjectMethod.Invoke(obj, parameters);
+
+							if (success)
+							{
+								GameObject gameObject = (GameObject)parameters[0];
+								list.Add(gameObject);
+							}
+						
+					}
+
+				}
+			}
+#else
+		foreach (var target in (IEnumerable<GameObject>)miGetAllOverlapping.Invoke(null, new object[] { e.mousePosition }))
 			{
 				list.Add(target);
 			}
-
-			if (list.Count <= 0)
+#endif
+            if (list.Count <= 0)
 			{
 				return;
 			}
