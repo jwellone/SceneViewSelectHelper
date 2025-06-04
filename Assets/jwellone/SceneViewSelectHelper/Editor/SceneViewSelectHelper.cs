@@ -55,9 +55,14 @@ namespace jwelloneEditor
 			}
 
 			var list = new List<GameObject>();
-			foreach (var target in (IEnumerable<GameObject>)miGetAllOverlapping.Invoke(null, new object[] { e.mousePosition }))
+			while (true)
 			{
-				list.Add(target);
+				var picked = HandleUtility.PickGameObject(e.mousePosition, false, list.ToArray());
+				if (picked == null)
+				{
+					break;
+				}
+				list.Add(picked);
 			}
 
 			if (list.Count <= 0)
